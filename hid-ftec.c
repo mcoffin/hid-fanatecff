@@ -2,8 +2,9 @@
 #include <linux/usb.h>
 #include <linux/hid.h>
 #include <linux/module.h>
+#include <linux/input.h>
 
-#include "usbhid/usbhid.h"
+// #include "usbhid/usbhid.h"
 #include "hid-ftec.h"
 
 int hid_debug = 1;
@@ -229,11 +230,13 @@ static void ftec_remove(struct hid_device *hdev)
 
 #define FANATEC_VENDOR_ID 0x0eb7
 
+#define CLUBSPORT_2_5_WHEELBASE_DEVICE_ID 0x0004
 #define CSL_ELITE_WHEELBASE_DEVICE_ID 0x0005
 #define CSL_ELITE_PEDALS_DEVICE_ID 0x6204
 
 static const struct hid_device_id devices[] = {
 	{ HID_USB_DEVICE(FANATEC_VENDOR_ID, CSL_ELITE_WHEELBASE_DEVICE_ID), .driver_data = FTEC_FF | FTEC_LEDS},
+	{ HID_USB_DEVICE(FANATEC_VENDOR_ID, CLUBSPORT_2_5_WHEELBASE_DEVICE_ID), .driver_data = FTEC_FF | FTEC_LEDS},
 	{ HID_USB_DEVICE(FANATEC_VENDOR_ID, CSL_ELITE_PEDALS_DEVICE_ID), .driver_data = FTEC_PEDALS },
     { }
 };
