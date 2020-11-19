@@ -1,6 +1,7 @@
 #include <linux/device.h>
 #include <linux/hid.h>
 #include <linux/input.h>
+#include <linux/moduleparam.h>
 
 #include "hid-ftec.h"
 
@@ -432,18 +433,27 @@ err_leds:
 	return 0;
 }
 
+bool csv25_init_a = true;
+module_param_named(csv25a, csv25_init_a, bool, 0444);
+bool csv25_init_b = true;
+module_param_named(csv25b, csv25_init_b, bool, 0444);
+bool csv25_init_c = true;
+module_param_named(csv25c, csv25_init_c, bool, 0444);
+bool csv25_init_d = true;
+module_param_named(csv25d, csv25_init_d, bool, 0444);
+
 static int ftecff_init_csv25(struct hid_device *hid) {
 	struct ftec_drv_data *drv_data;
 	s32 *value;
-	bool a=true, b=true, c=true, d=true;
 
 	drv_data = hid_get_drvdata(hid);
 	if (!drv_data) {
 		hid_err(hid, "Cannot add device, private driver data not allocated\n");
 		return -1;
 	}
+	dbg_hid("csv25a=%d csv25b=%d csv25c=%d csv25d=%d\n", csv25_init_a, csv25_init_b, csv25_init_c, csv25_init_d);
 
-    if (a) {
+    if (csv25_init_a) {
 		value = drv_data->report->field[0]->value;
 		value[0] = 0xf8;
 		value[1] = 0x09;
@@ -456,7 +466,7 @@ static int ftecff_init_csv25(struct hid_device *hid) {
 		hid_hw_request(hid, drv_data->report, HID_REQ_SET_REPORT);
 	}
 
-	if (b) {
+	if (csv25_init_b) {
 		value = drv_data->report->field[0]->value;
 		value[0] = 0xf8;
 		value[1] = 0x09;
@@ -469,12 +479,12 @@ static int ftecff_init_csv25(struct hid_device *hid) {
 		hid_hw_request(hid, drv_data->report, HID_REQ_SET_REPORT);
 	}
 
-	if (c) {
+	if (csv25_init_c) {
 		ftec_set_range(hid, 840);
 		drv_data->range = 840;
 	}
 
-	if (d) {
+	if (csv25_init_d) {
 		value = drv_data->report->field[0]->value;
 		value[0] = 0xf8;
 		value[1] = 0x09;
