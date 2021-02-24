@@ -3,6 +3,7 @@
 #include <linux/hid.h>
 #include <linux/module.h>
 #include <linux/input.h>
+#include <linux/moduleparam.h>
 
 #include "hid-ftec.h"
 
@@ -14,6 +15,9 @@ int hid_debug = 1;
 
 int ftecff_init(struct hid_device *hdev);
 void ftecff_remove(struct hid_device *hdev);
+
+int load_default = 4;
+module_param_named(load_default, load_default, int, 0444);
 
 static u8 ftec_get_load(struct hid_device *hid)
 {
@@ -194,7 +198,7 @@ static int ftec_probe(struct hid_device *hdev, const struct hid_device_id *id)
     }
 
     if (drv_data->quirks & FTEC_PEDALS) {
-        ftec_set_load(hdev, 4);
+        ftec_set_load(hdev, (u8)load_default);
 
         ret = device_create_file(&hdev->dev, &dev_attr_load);
         if (ret)
